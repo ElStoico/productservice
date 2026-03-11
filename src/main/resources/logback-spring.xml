@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <springProperty scope="context" name="appName" source="spring.application.name"/>
+    <springProperty scope="context" name="cloudWatchEndpoint" source="observability.cloudwatch.logs.endpoint"/>
+    <springProperty scope="context" name="cloudWatchRegion" source="observability.cloudwatch.logs.region"/>
+    <springProperty scope="context" name="cloudWatchAccessKey" source="observability.cloudwatch.logs.access-key"/>
+    <springProperty scope="context" name="cloudWatchSecretKey" source="observability.cloudwatch.logs.secret-key"/>
+    <springProperty scope="context" name="cloudWatchLogGroup" source="observability.cloudwatch.logs.log-group"/>
+    <springProperty scope="context" name="cloudWatchLogStreamPrefix" source="observability.cloudwatch.logs.log-stream-prefix"/>
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="CLOUDWATCH" class="com.product.productservice.logging.CloudWatchLogsAppender">
+        <endpoint>${cloudWatchEndpoint}</endpoint>
+        <region>${cloudWatchRegion}</region>
+        <accessKey>${cloudWatchAccessKey}</accessKey>
+        <secretKey>${cloudWatchSecretKey}</secretKey>
+        <logGroup>${cloudWatchLogGroup}</logGroup>
+        <logStreamPrefix>${cloudWatchLogStreamPrefix}</logStreamPrefix>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="CLOUDWATCH"/>
+    </root>
+
+    <logger name="com.product.productservice" level="DEBUG"/>
+</configuration>

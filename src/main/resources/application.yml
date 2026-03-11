@@ -1,6 +1,14 @@
 spring:
   application:
     name: productos-service
+  cloud:
+    aws:
+      region:
+        static: ${CLOUDWATCH_REGION:us-east-1}
+      credentials:
+        access-key: ${CLOUDWATCH_ACCESS_KEY:test}
+        secret-key: ${CLOUDWATCH_SECRET_KEY:test}
+      endpoint: ${CLOUDWATCH_ENDPOINT:http://localhost:4566}
   data:
     mongodb:
       uri: ${MONGODB_URI:mongodb://localhost:27017/db_productos}
@@ -20,6 +28,16 @@ management:
     web:
       exposure:
         include: health,info
+
+observability:
+  cloudwatch:
+    logs:
+      endpoint: ${CLOUDWATCH_ENDPOINT:http://localhost:4566}
+      region: ${CLOUDWATCH_REGION:us-east-1}
+      access-key: ${CLOUDWATCH_ACCESS_KEY:test}
+      secret-key: ${CLOUDWATCH_SECRET_KEY:test}
+      log-group: ${CLOUDWATCH_LOG_GROUP:producto-log-group}
+      log-stream-prefix: ${CLOUDWATCH_LOG_STREAM_PREFIX:productos-service}
 
 logging:
   level:
