@@ -36,6 +36,9 @@ public class ProductServiceImpl implements ProductService {
     public Product create(Product product) {
         log.info("Creando producto nombre={} precio={}", product.getNombre(), product.getPrecio());
         product.setId(null);
+        if (product.getStock() == null) {
+            product.setStock(0);
+        }
         return productRepository.save(product);
     }
 
@@ -47,8 +50,28 @@ public class ProductServiceImpl implements ProductService {
         existingProduct.setNombre(product.getNombre());
         existingProduct.setDescripcion(product.getDescripcion());
         existingProduct.setPrecio(product.getPrecio());
+        if (product.getStock() != null) {
+            existingProduct.setStock(product.getStock());
+        }
 
         log.info("Actualizando producto id={}", id);
+        return productRepository.save(existingProduct);
+    }
+
+    @Override
+    public Product adjustStock(String id, int delta) {
+        Product existingProduct = productRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Producto no encontrado con id: " + id));
+
+        int currentStock = existingProduct.getStock() == null ? 0 : existingProduct.getStock();
+        int updatedStock = currentStock + delta;
+        if (updatedStock < 0) {
+            throw new IllegalStateException("Stock insuficiente para producto con id: " + id);
+        }
+
+        existingProduct.setStock(updatedStock);
+        log.info("Ajustando stock producto id={} delta={} stockAnterior={} stockNuevo={}",
+                id, delta, currentStock, updatedStock);
         return productRepository.save(existingProduct);
     }
 

@@ -15,5 +15,7 @@ public interface ProductService {
 
     Product update(String id, Product product);
 
+    Product adjustStock(String id, int delta);
+
     boolean deleteById(String id);
 }
